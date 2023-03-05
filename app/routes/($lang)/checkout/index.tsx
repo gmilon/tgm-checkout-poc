@@ -80,7 +80,7 @@ export const loader: LoaderFunction = async ({request}) => {
   if (!detectedCountry) {
     const detectedIp = getClientIPAddress(request);
     // todo, get it from a geoip service
-    detectedCountry = 'ae';
+    detectedCountry = 'AE';
   }
   return json({
     detectedCountry,

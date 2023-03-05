@@ -11,6 +11,5 @@ export const useABVersion = (detectedCountry: string) => {
   if (GCC_COUNTRIES.includes(detectedCountry)) {
     abVersion = Math.random() > 0.5 ? Versions.V1 : Versions.V2; // todo: use A/B testing backend.
   }
-  console.log(detectedCountry);
   return abVersion;
 };

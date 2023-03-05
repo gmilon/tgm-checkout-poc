@@ -1,43 +1,35 @@
-# Hydrogen template: Demo Store
+# Shopify Single Checkout PoC
 
-Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **full-featured setup** of components, queries and tooling to get started with Hydrogen.
+This is a proof of concept for a single checkout page for Shopify.
+It is a single page checkout that uses the Shopify Buy SDK.
 
-[Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-[Get familiar with Remix](https://remix.run/docs/en/v1)
+It is a work in progress and is not production ready.
 
-## What's included
+The main idea is to prove that it's possible to create a Single Page checkout with AB testing based on the Shopify API.
 
-- Remix
-- Hydrogen
-- Oxygen
-- Shopify CLI
-- ESLint
-- Prettier
-- GraphQL generator
-- TypeScript and JavaScript flavors
-- Tailwind CSS (via PostCSS)
-- Full-featured setup of components and routes
+- for GCC customer:
+  - show a scroll or a accordion single checkout page.
+- For other customers:
+  - show a single checkout page with a multi step checkout.
 
-## Getting started
+You can find more details about the project in the [Notion](https://arrow-avocado-d1b.notion.site/The-Giving-Movement-693c903e80c6459f80dbf470406532f2)
 
-**Requirements:**
+## Getting Started
 
-- Node.js version 16.14.0 or higher
+install dependencies
 
 ```bash
-npm create @shopify/hydrogen@latest --template demo-store
+npm install
 ```
 
-Remember to update `.env` with your shop's domain and Storefront API token!
-
-## Building for production
-
-```bash
-npm run build
-```
-
-## Local development
+run the local server
 
 ```bash
 npm run dev
 ```
+
+## Project Structure
+
+This project is based on the hydrogen framework.
+
+https://hydrogen.shopify.dev/
