@@ -11,7 +11,8 @@ export default function Success() {
         >
           <p className="font-bold">Success</p>
           <p>
-            Your order has been successfully placed. You will receive an email
+            Your order has been successfully placed. You will receive an email.
+            (Check your spam folder)
           </p>
         </div>
         <a
