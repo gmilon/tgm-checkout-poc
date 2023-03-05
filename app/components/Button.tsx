@@ -1,56 +1,18 @@
-import {forwardRef} from 'react';
-import {Link} from '@remix-run/react';
-import clsx from 'clsx';
+import React from 'react';
 
-import {missingClass} from '~/lib/utils';
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const Button = forwardRef(
-  (
-    {
-      as = 'button',
-      className = '',
-      variant = 'primary',
-      width = 'auto',
-      ...props
-    }: {
-      as?: React.ElementType;
-      className?: string;
-      variant?: 'primary' | 'secondary' | 'inline';
-      width?: 'auto' | 'full';
-      [key: string]: any;
-    },
-    ref,
-  ) => {
-    const Component = props?.to ? Link : as;
+export const buttonStyle =
+  'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
 
-    const baseButtonClasses =
-      'inline-block rounded font-medium text-center py-3 px-6';
-
-    const variants = {
-      primary: `${baseButtonClasses} bg-primary text-contrast`,
-      secondary: `${baseButtonClasses} border border-primary/10 bg-contrast text-primary`,
-      inline: 'border-b border-primary/10 leading-none pb-1',
-    };
-
-    const widths = {
-      auto: 'w-auto',
-      full: 'w-full',
-    };
-
-    const styles = clsx(
-      missingClass(className, 'bg-') && variants[variant],
-      missingClass(className, 'w-') && widths[width],
-      className,
-    );
-
-    return (
-      <Component
-        // @todo: not supported until react-router makes it into Remix.
-        // preventScrollReset={true}
-        className={styles}
-        {...props}
-        ref={ref}
-      />
-    );
-  },
-);
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <button className={`${buttonStyle} ${className}`} {...props}>
+      {children}
+    </button>
+  );
+};

@@ -20,9 +20,6 @@ import {
   Seo,
   type SeoHandleFunction,
 } from '@shopify/hydrogen';
-import {Layout} from '~/components';
-import {GenericError} from './components/GenericError';
-import {NotFound} from './components/NotFound';
 
 import styles from './styles/app.css';
 import favicon from '../public/favicon.svg';
@@ -118,18 +115,7 @@ export function CatchBoundary() {
         <Links />
       </head>
       <body>
-        <Layout
-          layout={root?.data?.layout}
-          key={`${locale.language}-${locale.country}`}
-        >
-          {isNotFound ? (
-            <NotFound type={caught.data?.pageType} />
-          ) : (
-            <GenericError
-              error={{message: `${caught.status} ${caught.data}`}}
-            />
-          )}
-        </Layout>
+        <div>An Error Occured</div>
         <Scripts />
       </body>
     </html>
@@ -148,9 +134,7 @@ export function ErrorBoundary({error}: {error: Error}) {
         <Links />
       </head>
       <body>
-        <Layout layout={root?.data?.layout}>
-          <GenericError error={error} />
-        </Layout>
+        <div>An Error Occured {error.message}</div>
         <Scripts />
       </body>
     </html>

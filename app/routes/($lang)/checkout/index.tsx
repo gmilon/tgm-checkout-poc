@@ -9,22 +9,9 @@ import {
 } from '@shopify/hydrogen/dist/storefront-api-types';
 import {AppLoadContext} from '@remix-run/server-runtime/dist/data';
 import {CheckoutForm} from '~/components/checkout/CheckoutForm';
-
-/**
- * Todo:
- * 1. create a checkout page. X
- * 2. make an API call to create an order. X
- * 3. (mock payment). X
- * refator X
- * 4. remove the layout X
- * 6. deploy it under a subdomain. 2PM.
- * 5. create 2 other checkout version.
- * 6. cleanup the code..
- * 7. update the checkout button in the demo-store.
- * 8. Add nice readme with some explainations.
- * 9. remove the other pages.
- * make nice UI. end.
- */
+import {LoaderFunction} from '@remix-run/router';
+import {getClientIPAddress} from 'remix-utils';
+import {useABVersion} from '~/hooks/useAbTesting';
 
 const createCheckout = async (context: AppLoadContext) => {
   const checkoutData: CheckoutCreateInput = {
@@ -87,6 +74,19 @@ const placeOrder = async (checkoutId: string, context: AppLoadContext) => {
   });
 };
 
+export const loader: LoaderFunction = async ({request}) => {
+  // get the country code from the request
+  let detectedCountry = request.headers.get('CF-IPCountry');
+  if (!detectedCountry) {
+    const detectedIp = getClientIPAddress(request);
+    // todo, get it from a geoip service
+    detectedCountry = 'ae';
+  }
+  return json({
+    detectedCountry,
+  });
+};
+
 export const action: ActionFunction = async ({context, params: {lang}}) => {
   // todo: inject form data here.
   const {checkout} = await createCheckout(context);
@@ -100,9 +100,11 @@ export const action: ActionFunction = async ({context, params: {lang}}) => {
 };
 
 export default function Checkout() {
+  const {detectedCountry} = useLoaderData<typeof loader>();
+  const version = useABVersion(detectedCountry);
   return (
     <div className={'flex justify-center'}>
-      <CheckoutForm />
+      <CheckoutForm version={version} />
     </div>
   );
 }
