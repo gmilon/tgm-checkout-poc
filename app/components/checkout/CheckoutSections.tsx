@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Button} from '~/components';
 import {Input} from '~/components/Input';
+import {useActionData} from '@remix-run/react';
 
 const FormSection: React.FC<{title: string; children: React.ReactNode}> = ({
   title,
@@ -17,11 +18,18 @@ const FormSection: React.FC<{title: string; children: React.ReactNode}> = ({
   );
 };
 
-export const OrderReviewSection = () => {
+export const OrderReviewSection: React.FC<{loading: boolean}> = ({loading}) => {
+  const placeOrderBtnText = useMemo(() => {
+    if (loading) {
+      return 'Placing your order...';
+    }
+    return 'Complete Order';
+  }, [loading]);
+
   return (
     <FormSection title={'Review'}>
       <div className={'w-full mx-auto'}>
-        {/* todo, fetch this from the API */}
+        {/* todo, fetch the cart from the API */}
         <div className={'border p-8 mb-4'}>
           <div className={'flex gap-4'}>
             <div>
@@ -37,8 +45,12 @@ export const OrderReviewSection = () => {
           </div>
         </div>
         <div className={'flex justify-end'}>
-          <Button type="submit" className={'w-full md:w-auto'}>
-            Place Order
+          <Button
+            type="submit"
+            className={'w-full md:w-auto'}
+            disabled={loading}
+          >
+            {placeOrderBtnText}
           </Button>
         </div>
       </div>
@@ -64,6 +76,8 @@ export const PaymentSection = () => {
 };
 
 export const IdentitySection = () => {
+  const action = useActionData();
+  const [email, setEmail] = React.useState('gui.milon@gmail.com');
   return (
     <FormSection title={'Identity'}>
       <div className={'flex flex-wrap gap-4'}>
@@ -71,7 +85,10 @@ export const IdentitySection = () => {
           label={'Email'}
           placeholder={'john@doe.com'}
           name={'email'}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className={'mb-4 grow'}
+          error={action?.error?.email}
         />
         <Input label={'First Name'} placeholder={'John'} name={'firstname'} />
         <Input label={'Last Name'} placeholder={'Doe'} name={'firstname'} />

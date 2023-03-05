@@ -12,27 +12,37 @@ import {CheckoutForm} from '~/components/checkout/CheckoutForm';
 import {LoaderFunction} from '@remix-run/router';
 import {getClientIPAddress} from 'remix-utils';
 import {useABVersion} from '~/hooks/useAbTesting';
+import {useActionData} from 'react-router';
 
-const createCheckout = async (context: AppLoadContext) => {
-  const checkoutData: CheckoutCreateInput = {
-    email: 'pigoyis126@v2ssr.com',
-    allowPartialAddresses: true,
-    shippingAddress: {
-      address1: '123 Main St',
-      city: 'Dubai',
-      address2: 'Apt 1',
-      country: 'AE',
-      firstName: 'Pigoy',
-      lastName: 'Mln',
-      province: 'Dubai',
+const MOCK_DATA = {
+  email: 'pigoyis126@v2ssr.com',
+  allowPartialAddresses: true,
+  shippingAddress: {
+    address1: '123 Main St',
+    city: 'Dubai',
+    address2: 'Apt 1',
+    country: 'AE',
+    firstName: 'Pigoy',
+    lastName: 'Mln',
+    province: 'Dubai',
+  },
+  lineItems: [
+    {
+      quantity: 1,
+      variantId: 'gid://shopify/ProductVariant/44688572809537',
     },
-    lineItems: [
-      {
-        quantity: 1,
-        variantId: 'gid://shopify/ProductVariant/44688572809537',
-      },
-    ],
-  };
+  ],
+};
+
+type CreateCheckoutFormData = {
+  email: string;
+};
+
+const createCheckout = async (
+  context: AppLoadContext,
+  formData?: CreateCheckoutFormData,
+) => {
+  const checkoutData: CheckoutCreateInput = {...MOCK_DATA, ...formData};
   const {checkoutCreate} = await context.storefront.mutate<{
     checkoutCreate: CheckoutCreatePayload;
     checkoutUserErrors: CheckoutUserError[];
@@ -76,19 +86,29 @@ const placeOrder = async (checkoutId: string, context: AppLoadContext) => {
 
 export const loader: LoaderFunction = async ({request}) => {
   // get the country code from the request
+  const defaultCountry = 'AE';
   let detectedCountry = request.headers.get('CF-IPCountry');
   if (!detectedCountry) {
     const detectedIp = getClientIPAddress(request);
-    // todo, get it from a geoip service
-    detectedCountry = 'AE';
+    // todo, get it from a geoip service and fall back UAE.
+    detectedCountry = defaultCountry;
   }
   return json({
     detectedCountry,
   });
 };
 
-export const action: ActionFunction = async ({context, params: {lang}}) => {
+export const action: ActionFunction = async ({
+  request,
+  context,
+  params: {lang},
+}) => {
   // todo: inject form data here.
+  const formData = await request.formData();
+  const email = formData.get('email') ?? MOCK_DATA.email;
+  if (!email) {
+    return json({error: {email: 'email is required'}}, {status: 400});
+  }
   const {checkout} = await createCheckout(context);
   const checkoutId = checkout?.id;
   if (!checkoutId) {
@@ -101,6 +121,7 @@ export const action: ActionFunction = async ({context, params: {lang}}) => {
 
 export default function Checkout() {
   const {detectedCountry} = useLoaderData<typeof loader>();
+
   const version = useABVersion(detectedCountry);
   return (
     <div className={'flex justify-center'}>

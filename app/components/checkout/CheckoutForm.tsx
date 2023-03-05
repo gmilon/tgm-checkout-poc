@@ -8,13 +8,13 @@ import {
 } from '~/components/checkout/CheckoutSections';
 import {Versions} from '~/hooks/useAbTesting';
 
-const CggVersion: React.FC = () => {
+const CggVersion: React.FC<{loading: boolean}> = ({loading}) => {
   return (
     <>
       <IdentitySection />
       <ShippingSection />
       <PaymentSection />
-      <OrderReviewSection />
+      <OrderReviewSection loading={loading} />
     </>
   );
 };
@@ -38,12 +38,30 @@ const NonGccVersion: React.FC = () => {
   );
 };
 
+const useCheckoutForm = () => {
+  const [loading, setLoading] = React.useState(false);
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
+  };
+
+  return {onSubmit, loading};
+};
+
 export const CheckoutForm: React.FC<{version: Versions}> = ({version}) => {
+  const {loading, onSubmit} = useCheckoutForm();
   return (
     <>
-      <Form method="post" className={'py-8 w-full max-w-2xl'}>
+      <Form
+        method="post"
+        className={'py-8 w-full max-w-2xl'}
+        onSubmit={onSubmit}
+      >
         <h1>Checkout Single Page: (A/B Version: {version})</h1>
-        {version === Versions.NonCgg ? <NonGccVersion /> : <CggVersion />}
+        {version === Versions.NonCgg ? (
+          <NonGccVersion />
+        ) : (
+          <CggVersion loading={loading} />
+        )}
       </Form>
     </>
   );

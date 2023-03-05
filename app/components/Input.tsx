@@ -5,13 +5,20 @@ const InputStyle =
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
+  error?: string;
 };
 
-export const Input: React.FC<InputProps> = ({className, label, ...props}) => {
+export const Input: React.FC<InputProps> = ({
+  className,
+  label,
+  error,
+  ...props
+}) => {
   return (
     <div className={`${className} w-full md:w-auto`}>
       <label className={'block mb-2'}>{label}</label>
       <input className={InputStyle} type="text" {...props} />
+      {error && <p className={'text-red-500 mt-2'}>{error}</p>}
     </div>
   );
 };
